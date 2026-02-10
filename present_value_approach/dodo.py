@@ -175,69 +175,23 @@ def task_run_notebooks():
 ###############################################################
 
 
-def task_compile_latex_docs():
-    """Compile the LaTeX documents to PDFs"""
-    file_dep = [
-        "./reports/report_example.tex",
-        "./reports/my_article_header.sty",
-        "./reports/slides_example.tex",
-        "./reports/my_beamer_header.sty",
-        "./reports/my_common_header.sty",
-        "./reports/report_simple_example.tex",
-        "./reports/slides_simple_example.tex",
-        "./src/example_plot.py",
-        "./src/example_table.py",
-    ]
-    targets = [
-        "./reports/report_example.pdf",
-        "./reports/slides_example.pdf",
-        "./reports/report_simple_example.pdf",
-        "./reports/slides_simple_example.pdf",
-    ]
-
+def task_pull_CRSP_stock():
     return {
-        "actions": [
-            # My custom LaTeX templates
-            "latexmk -xelatex -halt-on-error -cd ./reports/report_example.tex",  # Compile
-            "latexmk -xelatex -halt-on-error -c -cd ./reports/report_example.tex",  # Clean
-            "latexmk -xelatex -halt-on-error -cd ./reports/slides_example.tex",  # Compile
-            "latexmk -xelatex -halt-on-error -c -cd ./reports/slides_example.tex",  # Clean
-            # Simple templates based on small adjustments to Overleaf templates
-            "latexmk -xelatex -halt-on-error -cd ./reports/report_simple_example.tex",  # Compile
-            "latexmk -xelatex -halt-on-error -c -cd ./reports/report_simple_example.tex",  # Clean
-            "latexmk -xelatex -halt-on-error -cd ./reports/slides_simple_example.tex",  # Compile
-            "latexmk -xelatex -halt-on-error -c -cd ./reports/slides_simple_example.tex",  # Clean
-        ],
-        "targets": targets,
-        "file_dep": file_dep,
-        "clean": True,
+        'file_dep':[],
+        'actions': ['python src/pull_CRSP_stock.py'],
+        'targets':['_data/CRSP_monthly_stock.parquet']
     }
 
-sphinx_targets = [
-    "./docs/index.html",
-]
-
-
-def task_build_chartbook_site():
-    """Compile Sphinx Docs"""
-    notebook_scripts = [
-        Path(notebook_tasks[notebook]["path"])
-        for notebook in notebook_tasks.keys()
-    ]
-    file_dep = [
-        "./README.md",
-        "./chartbook.toml",
-        *notebook_scripts,
-    ]
-
+def task_pull_30_day_T_bill():
     return {
-        "actions": [
-            "chartbook build -f",
-        ],  # Use docs as build destination
-        "targets": sphinx_targets,
-        "file_dep": file_dep,
-        "task_dep": [
-            "run_notebooks",
-        ],
-        "clean": True,
+        'file_dep':[],
+        'actions': ['python src/pull_30_day_T_bill.py'],
+        'targets':['_data/CRSP_30_day_T_bill.parquet']
+    }
+
+def task_generate_chart():
+    return {
+        'file_dep':["_data/CRSP_monthly_stock.parquet",'_data/CRSP_30_day_T_bill.parquet'],
+        'actions': ['python src/generate_chart.py'],
+        'targets':['_output/CRSP_monthly_stock_graph.png','_output/CRSP_30_day_T_bill_graph.png']
     }

@@ -43,39 +43,31 @@ import wrds
 import pandas as pd
 
 
-def pull_CRSP_monthly_file(
+def pull_30_day_T_bill(
     start_date="1946-01-01",
     end_date="2007-12-31",
     wrds_username=None,
 ):
     """
-    Pull CRSP value-weighted index returns (VWRETD, VWRETX)
-    for NYSE / AMEX / NASDAQ (primaryexch = N, A, Q)
+    Pull CRSP 30-day T-bill returns (t30ret)
     using CRSP CIZ 2.0 (wrds_msfv2_query).
 
     Returns
     -------
     DataFrame with:
         - mthcaldt
-        - primaryexch
-        - vwretd
-        - vwretx
+        - t30ret
     """
 
     query = f"""
         SELECT
-            msf.permno AS permno,
-            msf.securitynm AS name,
-            msf.mthcaldt AS date,
-            msf.primaryexch AS exchange,
-            msf.vwretd AS vwretd,
-            msf.vwretx AS vwretx
-        FROM crspm.wrds_msfv2_query AS msf
+           mcti.caldt AS date,
+           mcti.t30ret AS t30ret
+        FROM crspm.mcti AS mcti
         
         WHERE
-            msf.mthcaldt BETWEEN '{start_date}' AND '{end_date}'
-            AND msf.primaryexch IN ('N', 'A', 'Q')
-        ORDER BY msf.mthcaldt
+            mcti.caldt BETWEEN '{start_date}' AND '{end_date}'
+        ORDER BY mcti.caldt
     """
 
     db = wrds.Connection(wrds_username=wrds_username)
@@ -86,21 +78,17 @@ def pull_CRSP_monthly_file(
 
 
 
-def load_CRSP_monthly_file(data_dir=DATA_DIR):
-    path = Path(data_dir) / "CRSP_monthly_stock.parquet"
+def load_CRSP_30_day_T_bill(data_dir=DATA_DIR):
+    path = Path(data_dir) / "CRSP_30_day_T_bill.parquet"
     df = pd.read_parquet(path)
     return df
 
 
 
 
-def _demo():
-    df_msf = load_CRSP_monthly_file(data_dir=DATA_DIR)
-
-
 if __name__ == "__main__":
-    df_msf = pull_CRSP_monthly_file(start_date=START_DATE, end_date=END_DATE)
-    path = Path(DATA_DIR) / "CRSP_monthly_stock.parquet"
+    df_msf = pull_30_day_T_bill(start_date=START_DATE, end_date=END_DATE)
+    path = Path(DATA_DIR) / "CRSP_30_day_T_bill.parquet"
     path.parent.mkdir(parents=True, exist_ok=True)
     df_msf.to_parquet(path)
 
