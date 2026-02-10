@@ -30,7 +30,7 @@ def load_r30_day_T_bill(data_dir=DATA_DIR):
     return df
 
 
-def generate_chart_html(stock_market_return, T_bill):
+def generate_chart(stock_market_return, T_bill):
     required_cols = {"date", "vwretd", "vwretx"}
     assert required_cols.issubset(stock_market_return.columns), \
         f"Missing columns: {required_cols - set(stock_market_return.columns)}"

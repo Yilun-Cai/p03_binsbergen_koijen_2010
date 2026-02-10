@@ -3,9 +3,6 @@
 # Project Input and Output
 ##########################
 
-# Exclude _data folder, since it should all be pulled automatically (unless in the manual folder)
-/_data/*
-
 # Exclude _output directory since it's should generated automatically
 /_output/*
 
