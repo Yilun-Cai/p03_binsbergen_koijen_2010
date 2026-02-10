@@ -46,7 +46,7 @@ import pandas as pd
 def pull_CRSP_monthly_file(
     start_date="1946-01-01",
     end_date="2007-12-31",
-    wrds_username=None,
+    wrds_username=WRDS_USERNAME,
 ):
     """
     Pull CRSP value-weighted index returns (VWRETD, VWRETX)
@@ -57,17 +57,13 @@ def pull_CRSP_monthly_file(
     -------
     DataFrame with:
         - mthcaldt
-        - primaryexch
         - vwretd
         - vwretx
     """
 
     query = f"""
         SELECT
-            msf.permno AS permno,
-            msf.securitynm AS name,
-            msf.mthcaldt AS date,
-            msf.primaryexch AS exchange,
+            DISTINCT msf.mthcaldt AS date,
             msf.vwretd AS vwretd,
             msf.vwretx AS vwretx
         FROM crspm.wrds_msfv2_query AS msf
@@ -99,7 +95,7 @@ def _demo():
 
 
 if __name__ == "__main__":
-    df_msf = pull_CRSP_monthly_file(start_date=START_DATE, end_date=END_DATE)
+    df_msf = pull_CRSP_monthly_file(start_date=START_DATE, end_date=END_DATE, wrds_username=WRDS_USERNAME)
     path = Path(DATA_DIR) / "CRSP_monthly_stock.parquet"
     path.parent.mkdir(parents=True, exist_ok=True)
     df_msf.to_parquet(path)

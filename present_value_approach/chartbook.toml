@@ -33,6 +33,46 @@ notebook_path = "_output/01_example_notebook_interactive.ipynb"
 
 [dataframes]
 
+[dataframes.crsp_market_returns]
+data_sources = ["CRSP"]
+data_providers = ["WRDS"]
+how_is_pulled = "Pulled from WRDS using Python scripts"
+path_to_parquet_data = "_data/CRSP_monthly_stock.parquet"
+dataframe_docs_str = "Monthly CRSP value-weighted market returns with and without distributions."
+date_col = "date"
+
+
+[dataframes.crsp_30day_tbill]
+data_sources = ["CRSP"]
+data_providers = ["WRDS"]
+how_is_pulled = "Pulled from WRDS CRSP Treasury bill data"
+path_to_parquet_data = "_data/CRSP_30_day_T_bill.parquet"
+dataframe_docs_str = "Monthly 30-day Treasury bill return used as the risk-free rate."
+date_col = "date"
+
+
 
 [charts]
+[charts.crsp_market_returns_ts]
+chart_name = "CRSP Value-Weighted Market Returns"
+short_description_chart = "Monthly value-weighted market returns with and without distributions from CRSP"
+dataframe_id = "crsp_market_returns"
+path_to_html_chart = "_output/crsp_market_returns.png"
+chart_docs_str = "This time-series chart displays the monthly CRSP value-weighted market returns with and without distributions, serving as a sanity check that the CRSP market data was successfully retrieved."
 
+
+[charts.crsp_30day_tbill_ts]
+chart_name = "30-Day Treasury Bill Rate"
+short_description_chart = "Monthly 30-day Treasury bill rate from CRSP"
+dataframe_id = "crsp_30day_tbill"
+path_to_html_chart = "_output/crsp_30day_tbill.png"
+chart_docs_str = "This chart shows the monthly 30-day Treasury bill rate used as the risk-free return in subsequent asset pricing analysis."
+
+
+
+[charts.excess_market_return_ts]
+chart_name = "Excess Market Return"
+short_description_chart = "Monthly excess market return computed as vwretd minus the 30-day Treasury bill rate"
+dataframe_id = "crsp_market_returns"
+path_to_html_chart = "_output/excess_market_return.png"
+chart_docs_str = "This figure plots the excess market return, defined as the CRSP value-weighted market return with distributions minus the risk-free rate."

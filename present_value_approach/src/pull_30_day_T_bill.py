@@ -22,13 +22,11 @@ Thank you to Tobias Rodriguez del Pozo for his assistance in writing this code.
 
 """
 
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 import wrds
-from dateutil.relativedelta import relativedelta
-from pandas.tseries.offsets import MonthEnd
+
 
 from settings import config
 
@@ -46,7 +44,7 @@ import pandas as pd
 def pull_30_day_T_bill(
     start_date="1946-01-01",
     end_date="2007-12-31",
-    wrds_username=None,
+    wrds_username=WRDS_USERNAME,
 ):
     """
     Pull CRSP 30-day T-bill returns (t30ret)
@@ -87,7 +85,7 @@ def load_CRSP_30_day_T_bill(data_dir=DATA_DIR):
 
 
 if __name__ == "__main__":
-    df_msf = pull_30_day_T_bill(start_date=START_DATE, end_date=END_DATE)
+    df_msf = pull_30_day_T_bill(start_date=START_DATE, end_date=END_DATE, wrds_username=WRDS_USERNAME)
     path = Path(DATA_DIR) / "CRSP_30_day_T_bill.parquet"
     path.parent.mkdir(parents=True, exist_ok=True)
     df_msf.to_parquet(path)
